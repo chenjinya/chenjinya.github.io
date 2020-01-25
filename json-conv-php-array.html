@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="baidu-site-verification" content="rxFndYO5hw" />
+    <!-- <meta content="width=device-width,initial-scale=1,user-scalable=no" name="viewport"> -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Jinya</title>
+    <link href="favicon.ico" rel="icon" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="">
+    <style type="text/css">
+        body,html,p{
+            margin: 0;
+            padding: 0;
+        }
+
+        #JsonArea {
+            border: 1px solid #30a5dc;
+            
+        }
+
+        #ArrayArea {
+            border: 1px solid #dc3072;
+          
+        }
+        #JsonArea, #ArrayArea {
+            padding: 10px;
+            color: #333;
+            font-size: 14px;
+            margin: 10px;
+            outline: navajowhite;
+            text-align: left;
+        }
+
+        .area-title {
+            color: #999;
+            font-weight: bold;
+        }
+
+        #ConvertBtn{
+            background: #3498db;
+            border: 1px solid #297fb8;
+            outline: none;
+            text-align: center;
+            font-size: 14px;
+            padding: 10px;
+            display: block;
+            margin: 10px auto;
+            color: #FFF;
+            font-weight: bold;
+        }
+
+        #Area {
+            text-align: center;
+        }
+
+        #ErrorArea {
+            background: #e94c3d;
+            color: #FFF;
+            font-weight: 14px;
+        }
+
+        .flow-arrow {
+            color: #999;
+            font-weight: bold;
+            vertical-align: top;
+            display: inline;
+        }
+        
+        .area {
+            display: inline-block;
+        }
+       
+    </style>
+
+</head>
+<body>
+    <div id="Area" >
+        <div class='area' >
+            <p class="area-title">JSON</p>
+            <textarea id='JsonArea' cols = '40' rows = '30' >
+                    {"a":1,"b":"b","c":{"c1":1,"c2":2},"d":[1,2,3,{"d-1":1,"d-2":2}]}
+            </textarea>
+        </div>
+           
+        <p class="flow-arrow">=&gt;</p>
+        <div class='area' >
+            <p class="area-title">ARRAY</p>
+            <textarea id='ArrayArea'cols = '40' rows = '30' ></textarea>
+        </div>
+            
+    </div>
+    <div id="ErrorArea"></div>
+<button id="ConvertBtn">Convert!</button>
+
+</div> <!-- /container -->
+<script>
+    // console.log(document.getElementById("JsonArea").value);
+    let json = JSON.parse(document.getElementById("JsonArea").value)
+    console.log(json);
+    
+    const jsonConvToJson = (json, deep = 1, no_key = false) => {
+        var array_string = '';
+        let tab = '';
+        for(_i =0; _i < deep * 4; _i ++) {
+            tab += ' ';
+        }
+        for(i in json) {
+            if(no_key == false) {
+                array_string += tab + '"' + i + '" : ';
+            } else {
+                array_string += tab 
+            }
+            let value = json[i];
+            if(value instanceof Array) {
+                array_string += '[\n';
+                array_string += jsonConvToJson(value, deep +1, true);
+                array_string += tab +']';
+            } else if(value && typeof value == 'object') {
+                console.log('enter', i)
+                array_string += '{\n';
+                array_string += jsonConvToJson(value, deep +1);
+                array_string += tab +'}';
+            } else if (typeof value == 'string') {
+                array_string += '"' + value + '"';
+            } else if (typeof value == 'number') {
+                array_string += value;
+            }
+            array_string += ',\n';
+        }
+        array_string = array_string.substr(0, array_string.length - 2) + '\n';
+        return array_string;
+    }
+
+    const jsonConvToArray = (json, deep = 1, no_key = false) => {
+        var array_string = '';
+        let tab = '';
+        for(_i =0; _i < deep * 4; _i ++) {
+            tab += ' ';
+        }
+        for(i in json) {
+            
+            if(no_key == false) {
+                array_string += tab + '"' + i + '" => '
+            } else {
+                array_string += tab 
+            }
+            
+            let value = json[i];
+            if(value instanceof Array) {
+                array_string += '[\n';
+                array_string += jsonConvToArray(value, deep +1, true);
+                array_string += tab +']';
+            } else if(value !== null && typeof value == 'object') {
+                console.log('enter', i)
+                array_string += '[\n';
+                array_string += jsonConvToArray(value, deep +1);
+                array_string += tab +']';
+            } else if (typeof value == 'string') {
+                array_string += '"' + value + '"';
+            } else if (typeof value == 'number') {
+                array_string += value;
+            }
+            array_string += ',\n';
+        }
+        return array_string;
+    }
+
+    const convert = (strJson) => {
+        try {
+            document.getElementById("ErrorArea").innerHTML = '';
+            let json = JSON.parse(strJson)
+            let arrayStringify = "[\n" + jsonConvToArray(json) + "\n]";
+            let jsonStringify = "{\n" + jsonConvToJson(json) + "\n}";
+            console.log(arrayStringify);
+            document.getElementById("JsonArea").value = jsonStringify;
+            document.getElementById("ArrayArea").value = arrayStringify;
+        } catch(e) {
+            document.getElementById("ErrorArea").innerHTML = e;
+        }
+        
+    }
+    
+    document.getElementById("ConvertBtn").addEventListener('click', ()=>{
+        convert(document.getElementById("JsonArea").value);
+    })
+</script>
+</body>
+</html>

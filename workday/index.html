@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+	<title>工作日计算器</title>
+    <style type="text/css">
+     body{padding:0; margin:0; text-align:center; font-family:"Microsoft Yahei";}
+	 .today_input{ margin:5px; border:#89E 1px solid; border-radius:5px; padding:5px 10px; }
+	 #days-list{ }
+	 #days-list li{ display:inline; background:#e89; padding:3px 6px; border-radius:3px; margin:5px; list-style:none;}
+	 .out{ font-size:16;  font-weight:bold;}
+	 #whale {height: 99.5%; width: 100%;}
+    </style>
+
+</head>
+<body>
+	<h1>工作日计算器</h1>
+	<div>今天的日期:</div>
+	<div><input onchange="setMonth(this)" class="today_input" placeholder= "月,默认本月" /></div>
+	<div><input onchange="setDate(this)" class="today_input"  placeholder= "日,默认今天" /></div>
+	<div><input onchange="setCash(this)" class="today_input"  placeholder= "每天钱数，默认20" /></div>
+	<ul id="days-list">
+		
+	</ul>
+	<div id="counter-day"></div>
+	<div id="counter-cash"></div>
+	
+	<div style='position:fixed;bottom:0; text-align:center;' >by Jinya</div>
+    <script>
+		
+		var today = new Date();
+		var M = today.getMonth();
+		var D = today.getDate();
+		var Cash = 20;
+		var Count = 0;
+		listDate(M ,D);
+		function setMonth(dom){
+			if(!dom.value) dom.value =today.getMonth()+1;
+			M =  ( parseInt(dom.value) -1  );
+			listDate(M ,D);
+		}
+		function setDate(dom){
+			if(!dom.value) dom.value =  today.getDate();
+			D = ( parseInt(dom.value)  );
+			listDate(M ,D);
+			
+		};
+		function setCash(dom){
+			Cash = ( parseInt(dom.value)  );
+			listDate(M ,D);
+		}
+		function listDate(month,date){
+			Count = 0;
+			var thatDay = new Date();
+
+			thatDay.setMonth(month);
+			thatDay.setDate(date);
+			var thatday_min = thatDay.getTime();
+			var html = "";
+			var result = [];
+			for(var i = 0; i  < 31 ; i++){
+				var _date = new Date(thatday_min);
+				if(_date.getDay() == 6 ||_date.getDay() == 0 ){
+					thatday_min = thatday_min - 24*60*60*1000;
+					continue;
+				}
+				if( _date.getDay() == date ){
+					break;
+				}
+				Count++;
+				result .push("<li>"+(_date.getMonth()+1)+"."+_date.getDate()+",</li>");
+
+				thatday_min = thatday_min - 24*60*60*1000;
+				
+			}
+			result.reverse();
+			html = result .join("");
+			var listObj = document.getElementById("days-list");
+			listObj.innerHTML = html;
+			document.getElementById("counter-day").innerHTML="共 <span class='out'>"+Count+"</span> 天";
+			document.getElementById("counter-cash").innerHTML="可报金额 <span class='out'>"+(Cash*Count)+"</span> 元";
+		}
+     
+	 
+    </script>
+</body>
+</html>

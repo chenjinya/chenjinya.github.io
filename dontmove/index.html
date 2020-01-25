@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,
+            initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, 
+            user-scalable=no">
+    <title>Don't Move</title>
+    <link href="favicon.ico" rel="icon" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <script src="js/zepto.min.js"></script>
+    <script src="js/zepto.fx.js"></script>
+	
+    <style>
+	body{ background:#FFF; -webkit-user-select: none;/*禁用手机浏览器的用户选择功能 */
+-moz-user-select: none;}
+       .counter{ font-size:30px; margin-top: 20px; text-align: center; font-weight: bold;}
+       .toucher{ border: #FFF; background: #59F; border-radius: 50%; position:absolute; top:0; left:0; bottom:0 ; right:0;width: 100px; height: 100px; margin: auto; }
+   		.footer{ display: none;}
+   		.forweixin{display:none;}
+   		.footer p { font-size:20px;}
+   </style>
+</head>
+<body scoll=no>
+
+<div id="container">
+
+	<img class="forweixin" src="img/btnclick.png">
+    <div class="counter">点击下面的圆圈不要动哦！</div>
+
+    <div class="toucher">
+    </div>
+    <div class="footer">
+    	<p>Idea by Qishen. </p>
+    	<p>Made by Jinya.</p>
+
+    </div>
+
+    
+</div>
+<div id="footer" class="footer">copyright &copy; 2015 <a href="http://tieba.baidu.com?fr=washbear"> </a></div> 
+
+<script type="text/javascript" >
+window.ontouchstart = function(e) { e.preventDefault(); };
+$(document).ready(function(){
+	var $root = $("#container");
+	var $counter = $root.find(".counter");
+	var count = 0;
+	var touching = false;
+	var countTimeout = null;
+	var start = false;
+	var Counting = function(){
+		if( !start ) {
+			clearTimeout(countTimeout) ;
+			return;
+		}
+		countTimeout = setTimeout(function(){
+			count++;
+			$counter.html(count);
+			Counting();
+			
+		},1000);
+	};
+	var Ending = function(){
+		//setTimeout(function(){
+			touching = false;
+			start = false;
+		//}
+		clearTimeout(countTimeout);
+		
+		$("title").html("Don't Move , 我只坚持了"+count+"秒");
+		
+		$counter.html("游戏结束，你坚持了"+count+"秒！<br/><br/>"+"点击圆圈重新开始");
+		
+		
+		$(".footer").show();
+	}
+	$root.on("touchstart",".toucher",function(e){
+		if(touching) {
+			//Ending()
+			return;
+		}
+		console.log(e)
+		touching = true;
+		start = true;
+		count = 0;
+		$counter.html(count);
+		Counting();
+	}).on("touchmove",".toucher",function(e){
+		Ending();
+	}).on("touchend",".toucher",function(e){
+		Ending();
+		//$(".footer").html('end')
+
+	})
+
+});
+</script>
+
+<div style="display:none;" >
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?df5d455dfc332bd6baa4fea6c742ab7d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+</div>
+</body>
+</html>

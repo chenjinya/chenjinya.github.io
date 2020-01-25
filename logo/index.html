@@ -1,0 +1,453 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+    <meta content="telephone=no" name="format-detection"/>
+
+    <title>Baidu UER Happy new year 2005!</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #555;
+            font-family: 'Avenir Next', Avenir, 'Helvetica Neue', Helvetica, 'Lantinghei SC', 'Hiragino Sans GB', 'Microsoft YaHei';
+            font-size: 12px;
+        }
+
+        #canvas {
+            display: block;
+            background-color: #fff;
+        }
+
+        .pc {
+
+            position: absolute;
+			display:block;
+			height:552px;
+			width:980px;
+            margin: auto;
+            left: 0;
+            top: 0;
+			top:0;
+			bottom:0;
+            box-shadow: 0 0 1px rgba(0, 0, 0, .5);
+        }
+
+        .c {
+            margin: 10px;
+            box-shadow: 0 0 2px rgba(0, 0, 0, .9);
+        }
+
+        #loading_wrap {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: opacity 1s, top 1s 1s;
+            -webkit-transition: -webkit-opacity 1s, top 1s 1s;
+            opacity: 1;
+            -webkit-opacity: 1;
+        }
+
+        #body .hide {
+            opacity: 0;
+            -webkit-opacity: 0;
+            top: -200%;
+        }
+
+        #loading {
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            left: 50%;
+            top: 0;
+            margin-left: -37px;
+        }
+
+        #ts {
+            position: absolute;
+            right: 5%;
+            top: 5%;
+        }
+
+        #message {
+            position: absolute;
+            width: 300px;
+            height: 30px;
+            padding-top: 75px;
+            left: 50%;
+            top: 40%;
+            margin-left: -150px;
+            margin-top: -15px;
+            font-size: 14px;
+            line-height: 30px;
+            text-align: center;
+            -webkit-font-smoothing: antialiased;
+
+        }
+
+        .rotated {
+            transform: rotate(90deg);
+            -webkit-transform: rotate(90deg);
+        }
+
+        #log {
+            position: absolute;
+            width: 80%;
+            top: 5%;
+            left: 5%;
+            height: 80%;
+            overflow: auto;
+            font-size: 12px;
+            display: none;
+        }
+		#canvas{
+			
+		position:relative;
+		}
+    </style>
+
+</head>
+
+<body id="body">
+
+<div id="log"></div>
+<div id="ts"></div>
+
+<canvas id="canvas" width="100" height="100" style="">您的浏览器不支持canvas。</canvas>
+
+<div id="loading_wrap">
+    <div id="message"><img src="resource/loading.gif" id="loading" width="75" height="75"/>提示：气球升起时，戳中气球小熊会抓住它！</div>
+</div>
+
+<script type="text/javascript" src="index.js"></script>
+<script type="text/javascript">
+var game;
+var g = function (id) {
+    return document.getElementById(id);
+}
+var log = function (f) {
+    //g('log').innerHTML = ( (Date.now() - log.start) / 1000 + ': ' + f + '<br  >' ) + g('log').innerHTML;
+    return console.log((Date.now() - log.start) / 1000, arguments);
+}
+log.start = Date.now();
+
+//  0.加载
+var load = function (f) {
+    load.count++;
+
+    log('resource img load :' + load.count);
+    if (load.count >= 2) {
+        log('resource img load done!');
+        load.src = {};
+        load.src.doll = g('resource_doll');
+        load.src.other = g('resource_other');
+
+//
+//        var r, w, h;
+//
+//        r = g('resource_doll');
+//        w = r.width;
+//        h = r.height;
+//        load.src.doll = load.canvas({w: w, h: h})
+//        load.src.doll.ctx.drawImage(r, 0, 0, w, h, 0, 0, w, h);
+//        load.src.doll = load.src.doll.cns;
+//
+//        r = g('resource_other');
+//        w = r.width;
+//        h = r.height;
+//        load.src.other = load.canvas({w: w, h: h})
+//        load.src.other.ctx.drawImage(r, 0, 0, w, h, 0, 0, w, h);
+//        load.src.other = load.src.other.cns;
+//
+        load.explodeResource();
+    }
+}
+load.canvas = function (_config) {
+    var config = _config || {};
+    var cns = document.createElement('canvas');
+    var ctx = cns.getContext("2d");
+    cns.width = ctx.width = config.w || 100;
+    cns.height = ctx.height = config.h || 100;
+    return {
+        cns: cns,
+        ctx: ctx
+    }
+}
+load.count = 0;
+load.resource = {
+
+    bear: {src: 'doll', x: 0, y: 0, w: 1102, h: 5760, split: 6, scale: .4 },
+    girl: {src: 'doll', x: 0, y: 960 * 6, w: 1102, h: 6720, split: 7, scale: .442},
+
+    otako: {src: 'doll', x: 0, y: 960 * 13, w: 1102, h: 5760, split: 6, scale: .365},
+
+    kato: {src: 'doll', x: 1102, y: 0, w: 1102, h: 12480, split: 13, scale: .4},
+    uncle: {src: 'doll', x: 1102, y: 12480, w: 1102, h: 5760, split: 6, scale: .5},
+
+    logo: {src: 'other', x: 1672, y: 7785, w: 1084, h: 142, scale: .53},
+
+    stand: {src: 'doll', x: 2204, y: 3399, w: 948, h: 640, scale: .43},
+    pop_red: {src: 'doll', x: 2204, y: 4532, w: 366, h: 566, scale: .5},
+    pop_yellow: {src: 'doll', x: 2204, y: 5098, w: 366, h: 566, scale: .5},
+    pop_green: {src: 'doll', x: 2204, y: 5665, w: 366, h: 566, scale: .5},
+    pop_blue: {src: 'doll', x: 2204, y: 6231, w: 366, h: 566, scale: .5},
+
+
+    r2015: {src: 'other', x: 0, y: 0, w: 532, h: 6512, split: 31, scale: .53},
+    cheer: {src: 'other', x: 532, y: 0, w: 622, h: 15502, split: 50, scale: .53},
+    firework: {src: 'other', x: 532 + 622, y: 0, w: 518, h: 14402, split: 48},
+
+    words: {src: 'other', x: 532 + 622 + 518, y: 1133 * 6, w: 2200, h: 849, split: 6, scale: .4},
+
+    button: {src: 'other', x: 532 + 622 + 518, y: 7647, w: 710, h: 102, scale: .6},
+
+    icon_bdmap: {src: 'other', x: 1672, y: 8433, w: 144, h: 144, scale: .5},
+
+    icon_baidu: {src: 'other', x: 1836, y: 8433, w: 144, h: 144, scale: .5},
+    icon_tieba: {src: 'other', x: 2000, y: 8433, w: 144, h: 144, scale: .5},
+
+    icon_text: {src: 'other', x: 1672, y: 8845, w: 760, h: 100, scale: .3},
+
+
+    score: {src: 'other', x: 1672, y: 8241, w: 310, h: 130, scale: .68},
+    number: {src: 'other', x: 1672, y: 8371, w: 180, h: 42, vsplit: 6, scale: .8}
+
+};
+load.explodeResource = function () {
+    log('resource exploding...');
+    var resource = load.resource;
+    for (i in resource) {
+
+        var o = resource[i];
+        var sc = (o.scale || 1);
+        var r = [];
+
+        if (resource[i].split) {
+            var _h = o.h / o.split;
+            for (var a = 0; a < o.split; a++) {
+                r.push({w: o.w, h: _h, x: o.x, y: o.y + _h * a, scale: sc, src: load.src[ o.src]})
+            }
+        } else if (resource[i].vsplit) {
+            var _w = o.w / o.vsplit;
+            for (var a = 0; a < o.vsplit; a++) {
+
+                r.push({w: _w, h: o.h, x: o.x + _w * a, y: o.y, scale: sc, src: load.src[ o.src]})
+            }
+        } else {
+            o.src = load.src[ o.src];
+            r = [o];
+        }
+        resource[i] = r;
+    }
+    log._ = 0;
+    for (s in resource) {
+        max = resource[s].length;
+        res = [];
+        for (var i = 0; i < max; i++) {
+            //log('resrouce split count ' + (log._++));
+            var opt = resource[s][i];
+            var canvas = load.canvas({ w: opt.w * opt.scale, h: opt.h * opt.scale});
+            canvas.ctx.drawImage(opt.src, opt.x, opt.y, opt.w, opt.h, 0, 0, opt.w * opt.scale, opt.h * opt.scale);
+            res.push(canvas);
+
+        }
+        resource[s] = res;
+    }
+    load.resource = resource;
+    log('resource explode done.');
+    setTimeout(load.game, 1);
+}
+load.game = function () {
+
+    log('new game ...')
+    var color = {red: '255,79,58', blue: '80,168,240', green: '17,198,38', yellow: '245,190,48'};
+
+    game = new Game({fps: 60, resource: load.resource });
+
+    logo = game.addComponent({uid: 'logo', isCenter: true, revise: [0, 0], index: 10});
+    stand = game.addComponent({uid: 'stand', isCenter: logo, index: 2, revise: [-10, -30], visible: 0});
+
+
+    score = game.addComponent({uid: 'score', x: 40, y: 20, index: 1});
+    number = game.addComponent({uid: 'number', revise: [ score.w - 35, score.h - 55, score], index: 2});
+
+    firework = game.addComponent({uid: 'firework', isCenter: logo, revise: [-10, -50], index: 10});
+    r2015 = game.addComponent({uid: 'r2015', isCenter: logo, revise: [0, 0], index: 21});
+    cheer = game.addComponent({uid: 'cheer', isCenter: r2015, revise: [-10, -34], index: 22});
+
+
+    words = game.addComponent({uid: 'words', isCenter: logo, revise: [0, 100], index: 1});
+    button = game.addComponent({uid: 'button', isCenter: logo, revise: [0, 180]});
+
+    icon_bdmap = game.addComponent({uid: 'icon_bdmap', isCenter: button, revise: [-100, 80] });
+    icon_baidu = game.addComponent({uid: 'icon_baidu', isCenter: button, revise: [0, 80]});
+    icon_tieba = game.addComponent({uid: 'icon_tieba', isCenter: button, revise: [100, 80]});
+
+    icon_text = game.addComponent({uid: 'icon_text', isCenter: button, revise: [0, 150]});
+
+
+    uncle = game.addComponent({uid: 'uncle', index: 116, revise: [ 157, 25, stand], revisePop: [70, 200]});
+    kato = game.addComponent({uid: 'kato', index: 117, revise: [ 120, -15, stand], revisePop: [-130, 190]});
+    otako = game.addComponent({uid: 'otako', index: 118, revise: [ 203, 102, stand], revisePop: [-130, 200]});
+    girl = game.addComponent({uid: 'girl', index: 119, revise: [ 45, 85, stand], revisePop: [-90, 190]});
+    bear = game.addComponent({uid: 'bear', index: 120, revise: [ 110, 80, stand], revisePop: [-120, 220]});
+
+    log('game component added over!');
+
+    bear.frame = { 0: '0', 1: '1', 2: '2', 100: '3', 190: '4', 201: '5'};
+    girl.frame = { 0: '0', 1: '1', 2: '2', 10: '3', 101: '4', 190: '5', 201: '6'};
+    otako.frame = { 0: '0', 1: '1', 2: '2', 100: '3', 190: '4', 201: '5'};
+    kato.frame = { 0: '0', 1: '1', 2: '2', 10: '3', 20: '4', 30: '5', 40: '6', 50: '7', 60: '8', 70: '9', 100: '10', 101: '11', 201: '12'};
+    uncle.frame = { 0: '0', 1: '1', 2: '2', 100: '3', 190: '4', 201: '5'};
+
+    icon_baidu.href = ['http://wuxian.baidu.com/baidusearch/?from=1006979s', 'http://mo.baidu.com/baidusearch/ios.php?from=1006979y']
+    icon_bdmap.href = ['http://wuxian.baidu.com/map/', 'http://mo.baidu.com/map/']
+    icon_tieba.href = ['http://c.tieba.baidu.com/c/s/download/wap?src=mobaidu', 'http://c.tieba.baidu.com/c/s/download/pc?src=webtbGF']
+    icon_text.href = ['http://www.baidu.com/more/', 'http://mo.baidu.com/']
+
+    pops = [];
+
+    var pop, colors = [ 'blue', 'red', 'yellow', 'green'];
+    var countPops = 8;
+    var x = Math.max(game.cns.width, game.cns.height) / 16;
+    var y = Math.min(game.cns.width, game.cns.height) / 16;
+
+    log('start create Pop ...');
+    for (var i = 0; i < countPops; i++) {
+        pop = game.addComponent({uid: 'pop_' + colors[i % 4], index: 200 + i * 2, color: color[colors[i % 4]]});
+        log('-> add');
+        pop.x = Math.random() * 9999 % game.width() / countPops * i;
+        pop.y = Math.random() * 9999 % game.height()
+        pop.setLine();
+        log('-> line');
+        pops.push(pop);
+        log('create Pop ' + i);
+        log('::init pop :', i, pop.x, pop.y, pop.direction.join())
+    }
+    log('create Pops over!');
+    score.number = 0;
+    score.numberComponent = number;
+    game.score = score;
+
+    game.actionStart = function () {
+        log('game action start');
+        game.doll = [bear, girl, otako, kato, uncle];
+
+        //  气球开启移动
+        for (i in pops) {
+            pops[i].update();
+            pops[i].visible = 1;
+            pops[i].line.visible = 1;
+            pops[i].onTouchMe = function () {
+                if (!this.game.touchPop) {
+                    this.game.touchPop = this;
+                    log('touchPop xy:', this.x, this.y);
+                }
+            }
+            pops[i].supportPopMove();
+        }
+        log('support Pops Move');
+        //  轮流跳跃
+
+        game.doll.shift().supportJump();
+        for (s in game.doll) {
+            game.doll[s].resetBeforeSupportJumpInfoAndHide && game.doll[s].resetBeforeSupportJumpInfoAndHide();
+            game.doll[s].visible = 1;
+        }
+
+        log('supportJump');
+    }
+
+    game.toViewStart = function () {
+        game.hideAll();
+
+        logo.play().moveAbsY({to: 0, duration: 50})
+        stand.play();
+        score.play();
+        Game.component.scoreAdd.call(score, 0)
+        number.play({max: 1});
+
+
+        bear.play({max: 1});
+        girl.play({max: 1});
+        otako.play({max: 1});
+        kato.play({max: 1});
+        uncle.play({max: 1});
+
+        game.actionStart();
+    }
+
+    game.toViewOver = function () {
+        game.hideAll();
+        log('game view over start');
+
+        var _logo_done = function () {
+            words.redraw(score.number).visible = 1;
+            button.play();
+            icon_baidu.play();
+            icon_bdmap.play();
+            icon_tieba.play();
+            icon_text.play();
+        }
+        var _firework_done = function () {
+            this.visible = 0;
+            logo.moveAbsY({to: -100, callback: _logo_done})
+        }
+        var _cheer_done = function () {
+            firework.play({callback: _firework_done})
+        }
+        var _r2015_done = function () {
+            setTimeout(function () {
+                this.visible = 0;
+            }, 100)
+            cheer.visible = 1;
+            cheer.play({callback: _cheer_done});
+        }
+        logo.play();
+        r2015.play({callback: _r2015_done})
+    }
+
+    //game.toViewOver();
+    game.toViewStart();
+
+    button.onTouchMe = function (touch) {
+        log('touch button right?', touch.x > this.x + this.w / 2)
+        if (touch.x > this.x + this.w / 2) {
+
+            setTimeout(game.toViewStart, 500)
+        } else {
+            setTimeout(game.displayShare, 500)
+
+        }
+    }
+
+    icon_text.onTouchMe = icon_tieba.onTouchMe = icon_bdmap.onTouchMe = icon_baidu.onTouchMe = function () {
+        window.open(this.href[this.game.isMobile >>> 0], '_blank')
+    }
+
+}
+
+
+/*
+
+
+
+
+ });
+ */
+
+</script>
+<img src="resource/doll.png" style="display: none" id="resource_doll" onload="load(1)"/>
+<img src="resource/other.png" style="display: none" id="resource_other" onload="load(2)"/>
+</body>
+</html>
+    

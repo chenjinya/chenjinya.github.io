@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>d3</title>
+    <style type="text/css">
+      body{
+        font-size: 14px;
+        font-family: "Microsoft Yahei";
+        padding:20px;
+      }
+      .demo-item{
+        padding:20px;
+        background: #eee;
+        font-size:18px;
+        border-radius: 10px;
+        margin:40px;
+      }
+      pre{
+        padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <div class="demo-item">
+      <a href="/no" >href="/no"</a>
+    </div>
+    <div class="demo-item">
+    <a href="#" >href="#"</a>
+    </div>
+    <div class="demo-item">
+    <a href="##" >href="##"</a>
+    </div>
+    <div class="demo-item">
+    <a href="###" >href="###"</a>
+    </div>
+    <div class="demo-item">
+    <a href="javascript:void(0)" > href="javascript:void(0)"</a>
+    </div>
+    <div class="demo-item">
+    <a href="javascript:" >href="javascript:"</a>
+    </div>
+    <div class="demo-item">
+    <a href="javascript:undefined" >href="javascript:undefined"</a>
+    </div>
+    <div class="demo-item">
+    <a href="#" onClick="javascript:console.log(1);" >href="#" onClick="javascript:console.log(1);"</a>
+    </div>
+    <div class="demo-item">
+    <a href="#" onClick="javascript:console.log(1);return false;" > href="#" onClick="javascript:console.log(1);return false;" </a>
+
+    
+  </div>
+  <div class="demo-item">
+    
+    <a href="#" id="eventA"  >Event </a>
+    <pre>
+   document.getElementById("eventA").addEventListener("click",function(e){
+    console.log(e)
+    e.preventDefault();
+    /*return false;*/
+   })
+    </pre>
+  </div>
+  <div class="demo-item">
+    <a name="#">a #</a>
+  </div>
+  <div class="demo-item">
+    <a name="##">a ##</a>
+
+  </div>
+  <div class="demo-item">
+    <a href="javascript:alert('href')" onClick="javascript:alert('onclick');" > href="javascript:alert('href')" onClick="javascript:alert('onclick');"</a>
+  </div>
+  <div class="demo-item">
+    <a href="alert('href')" onClick="alert('onclick');" > href="alert('href')" onClick="alert('onclick');"</a>
+  </div>
+  <h2>void</h2>
+  void 0  or void (0)
+
+  <pre>
+在ECMAScript 262规范，有如下描述：
+
+The void Operator
+
+The production UnaryExpression : void UnaryExpression is evaluated as follows:
+
+Let expr be the result of evaluating UnaryExpression.
+Call GetValue(expr).
+Return undefined.
+NOTE: GetValue must be called even though its value is not used because it may have observable side-effects.
+
+令 expr 为解释执行UnaryExpression的结果。
+调用 GetValue(expr).
+返回 undefined.
+注意：GetValue一定要调用，即使它的值不会被用到，但是这个表达式可能会有副作用(side-effects)。
+(看不太懂)
+
+UnaryExpression的意思是：表示包含一元运算符的表达式
+  </pre>
+
+<pre>
+    undefined
+    void 0
+    void xxx
+
+    void 0 === undefined
+    void 1 === undefined
+  </pre>
+  <pre>
+    function uT(arg,undefined){
+      console.log(arg,undefined);
+    }
+    console.log(undefined);
+
+    window.undefined
+    //undefined
+    window.undefined = 1
+    //1
+    window.undefined
+    //undefined
+    function wx(){
+
+      var undefined = 1;
+      console.log(undefined);
+    }
+
+    var if = 1
+    VM586:2 Uncaught SyntaxError: Unexpected token if
+    var typeof  = 2
+    VM626:2 Uncaught SyntaxError: Unexpected token typeof
+    var null = 3
+    VM691:2 Uncaught SyntaxError: Unexpected token null
+    var undefined = 4;
+    undefined
+  </pre>
+  <pre>
+    var echoNum = {
+        num:1,
+        get getNum( ) { console.log('get',this.num); return this.num; },
+        set setNum( n ) { console.log('set', this.num = n*n ); return this.num; }
+    };
+    echoNum.getNum
+    echoNum.setNum = 3
+    echoNum.num
+
+    //如果是getter方法，会调用
+    void echoNum.setNum
+    void echoNum.getNum
+
+    //不会调用
+    delete echoNum.getNum
+  </pre>
+   <h2>undefined and null</h2>
+    <pre>
+
+
+    undefined == null
+    undefined !== null
+
+    typeof null === "object"
+    typeof undefined === "undefined"
+
+    123 + null + 4 == 127
+    1+ undefined +2 == NaN
+
+    //null == 0 == ""
+
+    //undefiend 不是关键字
+    "undefined" in window
+    "NaN" in window
+    "Infinity" in window
+
+
+    var undefined = 1;
+    var null = 2;
+
+    null == false
+    //false
+    !null === !false
+    //true
+    !undefined === !false
+    //true
+
+    null instanceof Object
+   // false
+    typeof null
+   // "object"
+
+
+null  undefined 备注
+是关键字  不是关键字 
+null参与数值计算返回0 undefined参与数值计算返回NaN  
+null参与typeof运算返回object  undefined参与typeof运算返回undefined  null是对象(空对象, 没有任何属性和方法)，undefined是全局对象（window）的一个特殊属性。
+null instanceof Object运算返回false   在JavaScript的对象模型中，所有的对象都是Object或其子类的实例，但null对象例外。
+可以被转换为false，但是不等于false  可以被转换为false，但是不等于false  alert(!null);返回true。
+alert(!undefined)返回true
+  </pre>
+  <h2>NaN</h2>
+  <pre>
+    (1+ undefined +2) == NaN
+   // false
+    (1+ undefined +2)
+   // NaN
+    isNaN(NaN)
+    //true
+    isNaN("string")
+   // true
+    "string" == NaN
+   // false
+
+   NaN == NaN
+
+   isNaN()
+  </pre>
+<h2>Summy</h2>
+  <pre>
+
+    undefined === void 1 
+    null == undefined
+    !null === !undefined
+
+    NaN != anything
+  </pre>
+   <script >
+   document.getElementById("eventA").addEventListener("click",function(e){
+    console.log(e)
+    e.preventDefault();
+    /*return false;*/
+   })
+   </script>
+  </body>
+</html>
